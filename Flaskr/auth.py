@@ -14,19 +14,25 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        verficar_contra = request.form['verificar_contra']
+        email = request.form['email']
         db = get_db()
         error = None
 
         if not username:
-            error = 'Username is required.'
+            error = 'El usuario no coninside.'
         elif not password:
-            error = 'Password is required.'
+            error = 'Se requiere contraseña.'
+        elif verficar_contra !=  password:
+            error = 'Contraseñas no coinciden.' 
+        elif not email:
+            error = 'se requiere email'   
 
         if error is None:
             try:
                 db.execute(
-                    "INSERT INTO user (username, password) VALUES (?, ?)",
-                    (username, generate_password_hash(password)),
+                    "INSERT INTO user (username, password, verificar_contra) VALUES (?, ?, ?)",
+                    (username, generate_password_hash(password), verficar_contra),
                 )
                 db.commit()
             except db.IntegrityError:
@@ -88,3 +94,24 @@ def login_required(view):
         return view(**kwargs)
 
     return wrapped_view
+
+@bp.route('/.....', methods=('GET', 'POST'))
+def update():
+    if request.method == 'POST':
+        email = request.form['nuevo_email']
+        error = None
+        db = get_db()
+
+        if not title:
+            error = 'Title is required.'
+
+        if error is not None:
+            
+            db.execute(
+                'UPDATE user SET email = ? WHERE id = ?',
+                (email, g.user[id],)
+            )
+            db.commit()
+            return redirect(url_for('index'))
+
+    return render_template('auth/.... .html')
